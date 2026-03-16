@@ -1,0 +1,230 @@
+/* ============================================================
+   TIMER.CSS — Timer Card, Ring, Controls, Quote, Shortcuts
+   FocusFlow Pomodoro Timer
+   ============================================================ */
+
+/* ── Timer Card ── */
+.timer-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  box-shadow: var(--shadow-md);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Subtle radial gradient on top edge */
+.timer-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.02) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+[data-theme="dark"] .timer-card::before {
+  background: radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.02) 0%, transparent 70%);
+}
+
+/* ── Progress Ring ── */
+.timer-ring-wrap {
+  position: relative;
+  width: 240px;
+  height: 240px;
+}
+
+.timer-ring {
+  transform: rotate(-90deg);  /* Start from top */
+  width: 240px;
+  height: 240px;
+}
+
+/* Background circle track */
+.timer-ring__track {
+  fill: none;
+  stroke: var(--border);
+  stroke-width: 3;
+}
+
+/* Animated progress circle */
+.timer-ring__progress {
+  fill: none;
+  stroke: var(--focus-color);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 691.15;     /* circumference = 2π × 110 */
+  stroke-dashoffset: 0;
+  transition: stroke-dashoffset 1s linear, stroke 0.3s ease;
+}
+
+/* Ring color changes per mode */
+.timer-ring__progress.mode-short { stroke: var(--break-color); }
+.timer-ring__progress.mode-long  { stroke: var(--long-color);  }
+
+/* Time display inside the ring */
+.timer-display {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+}
+
+.timer-display__time {
+  font-family: var(--font-display);
+  font-size: 3.2rem;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 1;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums; /* Prevent layout shift as digits change */
+}
+
+.timer-display__label {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+/* ── Session Dots (cycle tracker) ── */
+/* 4 dots = 1 full pomodoro cycle before a long break */
+.session-dots {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+
+.session-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--border);
+  transition: background var(--transition), transform var(--transition);
+}
+
+.session-dot.filled {
+  background: var(--focus-color);
+  transform: scale(1.15);
+}
+
+/* ── Timer Controls ── */
+.timer-controls {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* ── Motivational Quote ── */
+.quote-bar {
+  text-align: center;
+  padding: 0 1rem;
+}
+
+.quote-bar__text {
+  font-size: 0.8rem;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--ink-3);
+  line-height: 1.6;
+  transition: opacity 0.5s ease;
+}
+
+/* ── Auto-start Toggle ── */
+.autostart-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: var(--ink-3);
+}
+
+/* Toggle switch */
+.toggle {
+  position: relative;
+  width: 32px;
+  height: 18px;
+}
+
+.toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle__slider {
+  position: absolute;
+  inset: 0;
+  background: var(--border-strong);
+  border-radius: var(--radius-full);
+  transition: background var(--transition);
+  cursor: pointer;
+}
+
+.toggle__slider::before {
+  content: '';
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 50%;
+  transition: transform var(--transition);
+}
+
+.toggle input:checked + .toggle__slider {
+  background: var(--focus-color);
+}
+
+.toggle input:checked + .toggle__slider::before {
+  transform: translateX(14px);
+}
+
+/* ── Keyboard Shortcuts Hint ── */
+.shortcuts-hint {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.shortcut {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  color: var(--ink-4);
+}
+
+.shortcut kbd {
+  font-family: var(--font-body);
+  font-size: 0.6rem;
+  padding: 0.15rem 0.4rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg-alt);
+  color: var(--ink-3);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .timer-ring-wrap,
+  .timer-ring {
+    width: 200px;
+    height: 200px;
+  }
+
+  .timer-display__time { font-size: 2.6rem; }
+}

@@ -1,0 +1,193 @@
+/* ============================================================
+   TASKS.CSS — Task List Styles
+   FocusFlow Pomodoro Timer
+   ============================================================ */
+
+/* ── Task Input Row ── */
+.task-input-row {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.task-input {
+  flex: 1;
+  background: var(--bg-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color var(--transition);
+}
+
+.task-input:focus {
+  border-color: var(--border-strong);
+}
+
+.task-input::placeholder {
+  color: var(--ink-4);
+}
+
+/* Add button (+) */
+.task-add-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--focus-color);
+  color: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+  transition: all var(--transition);
+  align-self: center;
+}
+
+.task-add-btn:hover {
+  opacity: 0.8;
+  transform: scale(1.05);
+}
+
+/* ── Task List ── */
+.task-list {
+  list-style: none;
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+/* ── Individual Task Item ── */
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.55rem 1rem;
+  transition: background var(--transition);
+}
+
+.task-item:hover {
+  background: var(--bg-alt);
+}
+
+/* Checkbox */
+.task-item__check {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1.5px solid var(--border-strong);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition);
+  background: transparent;
+}
+
+.task-item__check.checked {
+  background: var(--focus-color);
+  border-color: var(--focus-color);
+}
+
+.task-item__check.checked::after {
+  content: '✓';
+  color: var(--bg);
+  font-size: 0.6rem;
+  font-weight: 700;
+}
+
+/* Task text */
+.task-item__text {
+  flex: 1;
+  font-size: 0.82rem;
+  color: var(--ink-2);
+  line-height: 1.4;
+  transition: all var(--transition);
+}
+
+.task-item__text.done {
+  text-decoration: line-through;
+  color: var(--ink-4);
+}
+
+/* Delete button — only shows on hover */
+.task-item__del {
+  opacity: 0;
+  font-size: 0.75rem;
+  color: var(--ink-4);
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  transition: all var(--transition);
+}
+
+.task-item:hover .task-item__del {
+  opacity: 1;
+}
+
+.task-item__del:hover {
+  color: #c0392b;
+  background: rgba(192, 57, 43, 0.08);
+}
+
+/* ── Empty State ── */
+.task-empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ink-4);
+  font-style: italic;
+}
+
+/* ── History List ── */
+.history-list {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  padding: 0.5rem 0;
+}
+
+.history-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.78rem;
+}
+
+/* Colored dot per session type */
+.history-item__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.history-item__dot.focus { background: var(--focus-color); }
+.history-item__dot.short { background: var(--break-color); }
+.history-item__dot.long  { background: var(--long-color);  }
+
+.history-item__info { flex: 1; }
+
+.history-item__title {
+  color: var(--ink-2);
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.history-item__time {
+  font-size: 0.68rem;
+  color: var(--ink-4);
+  margin-top: 0.1rem;
+}
+
+/* ── Empty State ── */
+.history-empty {
+  padding: 1.5rem 1rem;
+  text-align: center;
+  font-size: 0.78rem;
+  color: var(--ink-4);
+  font-style: italic;
+}

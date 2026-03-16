@@ -1,0 +1,64 @@
+/* ============================================================
+   TOKENS.CSS — Design Tokens
+   FocusFlow Pomodoro Timer
+
+   All colors, fonts, spacing, and shadows live here.
+   If you want to change the look of the app, start here.
+   ============================================================ */
+
+:root {
+  /* ── Light Mode Colors ── */
+  --bg:            #f5f2ee;
+  --bg-card:       #ffffff;
+  --bg-alt:        #edeae5;
+  --ink:           #0f0e0c;
+  --ink-2:         #3a3732;
+  --ink-3:         #7a7570;
+  --ink-4:         #b8b3ad;
+  --border:        #e2ddd8;
+  --border-strong: #c8c3bc;
+
+  /* ── Accent Colors per Timer Mode ── */
+  --focus-color:   #0f0e0c;   /* Focus session — near black */
+  --focus-light:   #3a3732;
+  --break-color:   #2d6a4f;   /* Short break — forest green */
+  --break-light:   #52b788;
+  --long-color:    #1d3557;   /* Long break — deep navy */
+  --long-light:    #457b9d;
+
+  /* ── Typography ── */
+  --font-display:  'Unbounded', sans-serif;
+  --font-body:     'DM Sans', sans-serif;
+
+  /* ── Border Radius ── */
+  --radius-sm:     6px;
+  --radius-md:     12px;
+  --radius-lg:     20px;
+  --radius-full:   999px;
+
+  /* ── Shadows ── */
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md:     0 4px 16px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-lg:     0 12px 40px rgba(0,0,0,0.10), 0 4px 12px rgba(0,0,0,0.06);
+
+  /* ── Transitions ── */
+  --transition:    0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Dark Mode Overrides ── */
+[data-theme="dark"] {
+  --bg:            #0f0e0c;
+  --bg-card:       #1a1916;
+  --bg-alt:        #242220;
+  --ink:           #f5f2ee;
+  --ink-2:         #ccc8c2;
+  --ink-3:         #7a7570;
+  --ink-4:         #3a3732;
+  --border:        #2a2825;
+  --border-strong: #3a3732;
+  --focus-color:   #f5f2ee;
+  --focus-light:   #ccc8c2;
+  --shadow-sm:     0 1px 3px rgba(0,0,0,0.3);
+  --shadow-md:     0 4px 16px rgba(0,0,0,0.4);
+  --shadow-lg:     0 12px 40px rgba(0,0,0,0.5);
+}

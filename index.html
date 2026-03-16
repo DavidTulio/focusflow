@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>FocusFlow — Pomodoro Study Timer</title>
+  <meta name="description" content="A modern Pomodoro study timer with task list, session history, and focus tracking. Built by David John Emmanuel G. Tulio." />
+  <meta name="author" content="David John Emmanuel G. Tulio" />
+
+  <!-- Open Graph (for sharing) -->
+  <meta property="og:title" content="FocusFlow — Pomodoro Study Timer" />
+  <meta property="og:description" content="Stay focused. Track your study sessions with FocusFlow." />
+  <meta property="og:type" content="website" />
+
+  <!--
+  ═══════════════════════════════════════════════════════════════
+  FOCUSFLOW — Pomodoro Study Timer
+  Built by David John Emmanuel G. Tulio
+
+  FILE STRUCTURE:
+    index.html              ← You are here (HTML structure only)
+    assets/
+      css/
+        tokens.css          ← Colors, fonts, spacing variables
+        base.css            ← Reset + shared button styles
+        layout.css          ← App grid, header, sidebar cards
+        timer.css           ← Timer card, ring, controls
+        tasks.css           ← Task list + history list styles
+        modal.css           ← Settings modal + toast
+      js/
+        settings.js         ← Default config, quotes, storage helpers
+        timer.js            ← Countdown, modes, ring animation
+        tasks.js            ← Task CRUD (add, toggle, delete)
+        history.js          ← Session log, stats, quotes
+        sound.js            ← Web Audio chime (no files needed)
+        theme.js            ← Dark/light mode toggle
+        app.js              ← Settings modal, toast, app init
+
+  HOW TO CUSTOMIZE:
+    - Change timer defaults  → assets/js/settings.js (DEFAULT_SETTINGS)
+    - Add motivational quotes → assets/js/settings.js (QUOTES array)
+    - Change colors          → assets/css/tokens.css
+    - Change fonts           → assets/css/tokens.css + base.css @import
+
+  HOW TO DEPLOY:
+    1. Push this entire folder to a GitHub repository
+    2. Connect the repo to Netlify
+    3. Deploy — no build step needed, it's plain HTML/CSS/JS
+  ═══════════════════════════════════════════════════════════════
+  -->
+
+  <!-- Theme pre-load: prevents flash of wrong theme on reload -->
+  <script>
+    (function () {
+      var saved = localStorage.getItem('ff_theme');
+      var dark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', saved || (dark ? 'dark' : 'light'));
+    })();
+  </script>
+
+  <!-- Stylesheets (order matters) -->
+  <link rel="stylesheet" href="assets/css/tokens.css" />
+  <link rel="stylesheet" href="assets/css/base.css" />
+  <link rel="stylesheet" href="assets/css/layout.css" />
+  <link rel="stylesheet" href="assets/css/timer.css" />
+  <link rel="stylesheet" href="assets/css/tasks.css" />
+  <link rel="stylesheet" href="assets/css/modal.css" />
+</head>
+
+<body>
+
+  <!-- ════════════════════════════════════
+       SETTINGS MODAL
+  ════════════════════════════════════ -->
+  <div class="modal-overlay" id="settingsModal" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+    <div class="modal">
+
+      <div class="modal__header">
+        <h2 class="modal__title" id="settingsTitle">Timer Settings</h2>
+        <button class="modal__close" id="closeSettings" aria-label="Close settings">✕</button>
+      </div>
+
+      <!-- Focus Duration -->
+      <div class="settings-group">
+        <label class="settings-label" for="focusDuration">Focus Duration</label>
+        <div class="settings-input-row">
+          <input type="number" id="focusDuration" class="settings-input" min="1" max="90" value="25" />
+          <span class="settings-hint">minutes (recommended: 25)</span>
+        </div>
+      </div>
+
+      <!-- Short Break -->
+      <div class="settings-group">
+        <label class="settings-label" for="shortBreak">Short Break</label>
+        <div class="settings-input-row">
+          <input type="number" id="shortBreak" class="settings-input" min="1" max="30" value="5" />
+          <span class="settings-hint">minutes (recommended: 5)</span>
+        </div>
+      </div>
+
+      <!-- Long Break -->
+      <div class="settings-group">
+        <label class="settings-label" for="longBreak">Long Break</label>
+        <div class="settings-input-row">
+          <input type="number" id="longBreak" class="settings-input" min="1" max="60" value="15" />
+          <span class="settings-hint">minutes (recommended: 15)</span>
+        </div>
+      </div>
+
+      <!-- Long Break Interval -->
+      <div class="settings-group">
+        <label class="settings-label" for="longInterval">Long Break After</label>
+        <div class="settings-input-row">
+          <input type="number" id="longInterval" class="settings-input" min="2" max="8" value="4" />
+          <span class="settings-hint">pomodoros</span>
+        </div>
+      </div>
+
+      <button class="modal__save" id="saveSettings">Save Settings</button>
+
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════
+       TOAST NOTIFICATION
+  ════════════════════════════════════ -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <!-- ════════════════════════════════════
+       MAIN APP
+  ════════════════════════════════════ -->
+  <div class="app">
+
+    <!-- ── HEADER ── -->
+    <header class="header">
+      <div class="header__brand">
+        <span class="header__logo">FocusFlow</span>
+        <span class="header__tagline">Pomodoro Timer</span>
+      </div>
+      <div class="header__controls">
+        <!-- Theme toggle -->
+        <button class="icon-btn" id="themeToggle" aria-label="Toggle dark/light mode" title="Toggle theme">
+          <span id="themeIcon">☽</span>
+        </button>
+        <!-- Settings -->
+        <button class="icon-btn" id="openSettings" aria-label="Open settings" title="Settings (durations)">
+          ⚙
+        </button>
+        <!-- Clear history -->
+        <button class="icon-btn" id="clearHistory" aria-label="Clear today's history and stats" title="Clear history">
+          🗑
+        </button>
+      </div>
+    </header>
+
+    <!-- ── MODE TABS ── -->
+    <nav class="mode-tabs" role="tablist" aria-label="Timer modes">
+      <button class="mode-tab active" data-mode="focus" role="tab" aria-selected="true">
+        🍅 Focus
+      </button>
+      <button class="mode-tab" data-mode="short" role="tab" aria-selected="false">
+        ☕ Short Break
+      </button>
+      <button class="mode-tab" data-mode="long" role="tab" aria-selected="false">
+        🌿 Long Break
+      </button>
+    </nav>
+
+    <!-- ── TIMER SECTION (left column) ── -->
+    <main class="timer-section" aria-label="Timer">
+
+      <div class="timer-card">
+
+        <!-- Circular progress ring with time display inside -->
+        <div class="timer-ring-wrap" role="img" aria-label="Timer progress ring">
+          <svg class="timer-ring" viewBox="0 0 240 240" aria-hidden="true">
+            <circle class="timer-ring__track"    cx="120" cy="120" r="110" />
+            <circle class="timer-ring__progress" cx="120" cy="120" r="110" id="progressRing" />
+          </svg>
+          <div class="timer-display">
+            <div class="timer-display__time"  id="timerDisplay" aria-live="polite" aria-atomic="true">25:00</div>
+            <div class="timer-display__label" id="modeLabel">Focus Session</div>
+          </div>
+        </div>
+
+        <!-- Cycle tracker dots (4 dots = 1 full cycle) -->
+        <div class="session-dots" role="group" aria-label="Pomodoro cycle progress">
+          <div class="session-dot" id="dot-0" aria-hidden="true"></div>
+          <div class="session-dot" id="dot-1" aria-hidden="true"></div>
+          <div class="session-dot" id="dot-2" aria-hidden="true"></div>
+          <div class="session-dot" id="dot-3" aria-hidden="true"></div>
+        </div>
+
+        <!-- Start / Reset / Skip controls -->
+        <div class="timer-controls">
+          <button class="btn-secondary" id="resetBtn" aria-label="Reset timer" title="Reset (R)">↺</button>
+          <button class="btn-primary"   id="startBtn" aria-label="Start timer">Start</button>
+          <button class="btn-secondary" id="skipBtn"  aria-label="Skip to next session" title="Next (N)">⏭</button>
+        </div>
+
+        <!-- Motivational quote -->
+        <div class="quote-bar">
+          <p class="quote-bar__text" id="quoteText">Stay focused. Every minute counts.</p>
+        </div>
+
+        <!-- Auto-start toggle -->
+        <div class="autostart-row">
+          <label class="toggle" aria-label="Auto-start next session">
+            <input type="checkbox" id="autoStart" />
+            <span class="toggle__slider"></span>
+          </label>
+          <span>Auto-start next session</span>
+        </div>
+
+        <!-- Keyboard shortcuts hint -->
+        <div class="shortcuts-hint" aria-label="Keyboard shortcuts">
+          <span class="shortcut"><kbd>Space</kbd> Start / Pause</span>
+          <span class="shortcut"><kbd>R</kbd> Reset</span>
+          <span class="shortcut"><kbd>N</kbd> Next mode</span>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- ── SIDEBAR (right column) ── -->
+    <aside class="sidebar" aria-label="Tasks and statistics">
+
+      <!-- Today's Stats -->
+      <div class="sidebar-card">
+        <div class="sidebar-card__header">
+          <span class="sidebar-card__title">Today's Stats</span>
+        </div>
+        <div class="stats-row">
+          <div class="stat-item">
+            <div class="stat-item__num"   id="statPomodoros">0</div>
+            <div class="stat-item__label">Pomodoros</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__num"   id="statMinutes">0</div>
+            <div class="stat-item__label">Min Focused</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__num"   id="statTasks">0</div>
+            <div class="stat-item__label">Tasks Done</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Task List -->
+      <div class="sidebar-card">
+        <div class="sidebar-card__header">
+          <span class="sidebar-card__title">Tasks</span>
+          <button class="sidebar-card__action" id="clearTasks" aria-label="Clear completed tasks">
+            Clear done
+          </button>
+        </div>
+        <div class="task-input-row">
+          <input
+            type="text"
+            class="task-input"
+            id="taskInput"
+            placeholder="Add a task and press Enter..."
+            maxlength="100"
+            aria-label="New task"
+          />
+          <button class="task-add-btn" id="taskAddBtn" aria-label="Add task">+</button>
+        </div>
+        <ul class="task-list" id="taskList" aria-label="Task list" role="list">
+          <li class="task-empty" id="taskEmpty">No tasks yet. Add one above!</li>
+        </ul>
+      </div>
+
+      <!-- Session History -->
+      <div class="sidebar-card">
+        <div class="sidebar-card__header">
+          <span class="sidebar-card__title">Session History</span>
+        </div>
+        <ul class="history-list" id="historyList" aria-label="Session history" role="list">
+          <li class="history-empty" id="historyEmpty">No sessions completed yet today.</li>
+        </ul>
+      </div>
+
+    </aside>
+
+  </div><!-- /app -->
+
+  <!--
+  ════════════════════════════════════════════════════════════
+  SCRIPTS — Load order is important!
+
+  1. settings.js  → defines DEFAULT_SETTINGS, QUOTES, helpers
+  2. sound.js     → defines playSound()
+  3. history.js   → defines history, stats, logHistory(), etc.
+  4. tasks.js     → defines tasks, addTask(), renderTasks(), etc.
+  5. theme.js     → defines initTheme(), toggleTheme()
+  6. timer.js     → defines timer logic, uses functions above
+  7. app.js       → settings modal, toast, calls initApp() last
+  ════════════════════════════════════════════════════════════
+  -->
+  <script src="assets/js/settings.js"></script>
+  <script src="assets/js/sound.js"></script>
+  <script src="assets/js/history.js"></script>
+  <script src="assets/js/tasks.js"></script>
+  <script src="assets/js/theme.js"></script>
+  <script src="assets/js/timer.js"></script>
+  <script src="assets/js/app.js"></script>
+
+</body>
+</html>
