@@ -3,8 +3,31 @@
    FocusFlow Pomodoro Timer
    ============================================================ */
 
-/* ── Google Fonts ── */
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@300;400;700;900&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+/* ── Fonts ──
+   Served from assets/fonts/ (no outside requests). Each file is a
+   variable font: one file covers every weight. Latin characters only.
+   Licences: assets/fonts/OFL-*.txt */
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-weight: 300 900;
+  font-display: swap;
+  src: url('../fonts/unbounded-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: normal;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../fonts/dmsans-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'DM Sans';
+  font-style: italic;
+  font-weight: 300 700;
+  font-display: swap;
+  src: url('../fonts/dmsans-italic.woff2') format('woff2');
+}
 
 /* ── Reset ── */
 *, *::before, *::after {
@@ -69,8 +92,8 @@ a {
 }
 
 /* Color variants for break modes */
-.btn-primary.mode-short { background: var(--break-color); }
-.btn-primary.mode-long  { background: var(--long-color); }
+.btn-primary.mode-short { background: var(--break-color); color: #fff; }
+.btn-primary.mode-long  { background: var(--long-color);  color: #fff; } /* white on both colours, in both themes */
 
 /* Secondary round icon button (Reset, Skip) */
 .btn-secondary {
@@ -118,3 +141,4 @@ a {
 ::-webkit-scrollbar        { width: 3px; }
 ::-webkit-scrollbar-track  { background: transparent; }
 ::-webkit-scrollbar-thumb  { background: var(--border-strong); border-radius: 3px; }
+

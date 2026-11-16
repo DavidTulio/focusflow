@@ -21,6 +21,7 @@ let timeLeft      = 0;        // Seconds remaining
 let totalTime     = 0;        // Total seconds for current session
 let isRunning     = false;    // Is the timer currently ticking?
 let interval      = null;     // setInterval reference
+let endAt         = 0;        // When the running session ends (ms timestamp)
 let pomodoroCount = 0;        // Pomodoros completed in current cycle
 
 /* ── DOM References ─────────────────────────────────────── */
@@ -46,12 +47,16 @@ function startTimer() {
   if (isRunning) return;
   isRunning = true;
   startBtn.textContent = 'Pause';
-  interval = setInterval(tick, 1000);
+  // Count down from a fixed end time, so the timer stays exact even when
+  // the browser slows down a background tab
+  endAt = Date.now() + timeLeft * 1000;
+  interval = setInterval(tick, 250);
 }
 
 /** Pause the countdown. Does nothing if not running. */
 function pauseTimer() {
   if (!isRunning) return;
+  timeLeft  = Math.max(0, Math.round((endAt - Date.now()) / 1000));
   isRunning = false;
   startBtn.textContent = 'Resume';
   clearInterval(interval);
@@ -68,16 +73,32 @@ function resetTimer() {
 }
 
 /**
- * Called every second by setInterval.
- * Decrements timeLeft and checks for session completion.
+ * Called several times a second while running.
+ * Works out the time left from the end time and checks for completion.
  */
 function tick() {
-  timeLeft--;
-  updateDisplay();
-  updateRing();
+  if (!isRunning) return;
+  const left = Math.max(0, Math.round((endAt - Date.now()) / 1000));
+  if (left !== timeLeft) {
+    timeLeft = left;
+    updateDisplay();
+    updateRing();
+  }
   if (timeLeft <= 0) {
     onSessionComplete();
   }
+}
+
+// Coming back to the tab: catch up straight away
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) tick();
+});
+
+/** Desktop notification, only if turned on in Settings and the tab is hidden. */
+function notifySessionEnd(message) {
+  if (!settings.notify || !document.hidden) return;
+  if (!('Notification' in window) || Notification.permission !== 'granted') return;
+  try { new Notification('FocusFlow', { body: message, icon: 'assets/icon.svg' }); } catch (e) { /* not supported here */ }
 }
 
 /** Called when a session reaches zero. */
@@ -90,6 +111,8 @@ function onSessionComplete() {
 
   // Log this session in history
   logHistory(currentMode);
+
+  notifySessionEnd(currentMode === 'focus' ? 'Focus session complete. Time for a break.' : 'Break over. Time to focus.');
 
   if (currentMode === 'focus') {
     // Update stats

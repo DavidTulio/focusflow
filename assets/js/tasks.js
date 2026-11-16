@@ -16,7 +16,7 @@
    tasks is an array of objects: { id, text, done }
    Loaded from localStorage on init, saved on every change.
    ---------------------------------------------------------- */
-let tasks = loadFromStorage('ff_tasks', []);
+let tasks = cleanTasks(loadFromStorage('ff_tasks', []));
 
 /* ── DOM References ─────────────────────────────────────── */
 const taskInputEl = document.getElementById('taskInput');

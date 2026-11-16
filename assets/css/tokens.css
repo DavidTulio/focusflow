@@ -13,8 +13,8 @@
   --bg-alt:        #edeae5;
   --ink:           #0f0e0c;
   --ink-2:         #3a3732;
-  --ink-3:         #7a7570;
-  --ink-4:         #b8b3ad;
+  --ink-3:         #6a655f;   /* small text — 5:1 or more on every surface */
+  --ink-4:         #b8b3ad;   /* decorative only, never text */
   --border:        #e2ddd8;
   --border-strong: #c8c3bc;
 
@@ -52,8 +52,8 @@
   --bg-alt:        #242220;
   --ink:           #f5f2ee;
   --ink-2:         #ccc8c2;
-  --ink-3:         #7a7570;
-  --ink-4:         #3a3732;
+  --ink-3:         #8f8a84;   /* small text — 4.6:1 or more on every surface */
+  --ink-4:         #3a3732;   /* decorative only, never text */
   --border:        #2a2825;
   --border-strong: #3a3732;
   --focus-color:   #f5f2ee;
