@@ -15,7 +15,7 @@
    Merge saved settings with defaults so new settings
    added in future updates don't break existing data.
    ---------------------------------------------------------- */
-let settings = { ...DEFAULT_SETTINGS, ...loadFromStorage('ff_settings', {}) };
+let settings = cleanSettings(loadFromStorage('ff_settings', {}));
 
 /* ── Toast ──────────────────────────────────────────────────
    A small popup at the bottom of the screen for brief
@@ -38,6 +38,7 @@ function showToast(message) {
 /* ── Settings Modal ─────────────────────────────────────── */
 
 const settingsModalEl = document.getElementById('settingsModal');
+const notifyToggleEl  = document.getElementById('notifyToggle');
 
 /** Open the settings modal and pre-fill current values. */
 function openSettings() {
@@ -45,6 +46,7 @@ function openSettings() {
   document.getElementById('shortBreak').value    = settings.shortBreak;
   document.getElementById('longBreak').value     = settings.longBreak;
   document.getElementById('longInterval').value  = settings.longInterval;
+  notifyToggleEl.checked = settings.notify;
   settingsModalEl.classList.add('open');
 }
 
@@ -71,6 +73,24 @@ function saveSettings() {
   closeSettings();
   showToast('✓ Settings saved');
 }
+
+// Notifications: ask the browser for permission when the toggle is turned on
+notifyToggleEl.addEventListener('change', async () => {
+  if (!notifyToggleEl.checked) { settings.notify = false; saveToStorage('ff_settings', settings); return; }
+  if (!('Notification' in window)) {
+    notifyToggleEl.checked = false;
+    showToast('Notifications aren’t supported in this browser');
+    return;
+  }
+  const permission = Notification.permission === 'default' ? await Notification.requestPermission() : Notification.permission;
+  if (permission !== 'granted') {
+    notifyToggleEl.checked = false;
+    showToast('Notifications are blocked for this site');
+    return;
+  }
+  settings.notify = true;
+  saveToStorage('ff_settings', settings);
+});
 
 /* ── Settings Modal Event Listeners ────────────────────── */
 

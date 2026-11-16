@@ -205,7 +205,7 @@
   align-items: center;
   gap: 0.35rem;
   font-size: 0.65rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
 }
 
 .shortcut kbd {

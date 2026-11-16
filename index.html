@@ -12,6 +12,10 @@
   <meta property="og:title" content="FocusFlow — Pomodoro Study Timer" />
   <meta property="og:description" content="Stay focused. Track your study sessions with FocusFlow." />
   <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://pmdr-focusflow.netlify.app/" />
+  <meta property="og:image" content="https://pmdr-focusflow.netlify.app/assets/og.jpg" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="canonical" href="https://pmdr-focusflow.netlify.app/" />
 
   <!--
   ═══════════════════════════════════════════════════════════════
@@ -34,6 +38,7 @@
         tasks.js            ← Task CRUD (add, toggle, delete)
         history.js          ← Session log, stats, quotes
         sound.js            ← Web Audio chime (no files needed)
+        theme-boot.js       ← Applies the saved theme before first paint
         theme.js            ← Dark/light mode toggle
         app.js              ← Settings modal, toast, app init
 
@@ -41,7 +46,7 @@
     - Change timer defaults  → assets/js/settings.js (DEFAULT_SETTINGS)
     - Add motivational quotes → assets/js/settings.js (QUOTES array)
     - Change colors          → assets/css/tokens.css
-    - Change fonts           → assets/css/tokens.css + base.css @import
+    - Change fonts           → assets/fonts/ + base.css @font-face + tokens.css
 
   HOW TO DEPLOY:
     1. Push this entire folder to a GitHub repository
@@ -51,13 +56,16 @@
   -->
 
   <!-- Theme pre-load: prevents flash of wrong theme on reload -->
-  <script>
-    (function () {
-      var saved = localStorage.getItem('ff_theme');
-      var dark  = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.setAttribute('data-theme', saved || (dark ? 'dark' : 'light'));
-    })();
-  </script>
+  <script src="assets/js/theme-boot.js"></script>
+
+  <!-- Fonts: start downloading straight away -->
+  <link rel="preload" href="assets/fonts/unbounded-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/dmsans-normal.woff2" as="font" type="font/woff2" crossorigin />
+
+  <!-- Icon and browser colour -->
+  <link rel="icon" href="assets/icon.svg" type="image/svg+xml" />
+  <meta name="theme-color" content="#f5f2ee" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0f0e0c" media="(prefers-color-scheme: dark)" />
 
   <!-- Stylesheets (order matters) -->
   <link rel="stylesheet" href="assets/css/tokens.css" />
@@ -115,6 +123,18 @@
           <input type="number" id="longInterval" class="settings-input" min="2" max="8" value="4" />
           <span class="settings-hint">pomodoros</span>
         </div>
+      </div>
+
+      <!-- Notifications -->
+      <div class="settings-group">
+        <div class="settings-toggle-row">
+          <label class="toggle">
+            <input type="checkbox" id="notifyToggle" aria-describedby="notifyHint" />
+            <span class="toggle__slider"></span>
+          </label>
+          <label class="settings-label settings-label--inline" for="notifyToggle">Notify me when a session ends</label>
+        </div>
+        <span class="settings-hint" id="notifyHint">Only when this tab is in the background. Your browser will ask first.</span>
       </div>
 
       <button class="modal__save" id="saveSettings">Save Settings</button>
@@ -206,8 +226,8 @@
 
         <!-- Auto-start toggle -->
         <div class="autostart-row">
-          <label class="toggle" aria-label="Auto-start next session">
-            <input type="checkbox" id="autoStart" />
+          <label class="toggle">
+            <input type="checkbox" id="autoStart" aria-label="Auto-start next session" />
             <span class="toggle__slider"></span>
           </label>
           <span>Auto-start next session</span>
@@ -252,7 +272,7 @@
       <div class="sidebar-card">
         <div class="sidebar-card__header">
           <span class="sidebar-card__title">Tasks</span>
-          <button class="sidebar-card__action" id="clearTasks" aria-label="Clear completed tasks">
+          <button class="sidebar-card__action" id="clearTasks" aria-label="Clear done tasks">
             Clear done
           </button>
         </div>

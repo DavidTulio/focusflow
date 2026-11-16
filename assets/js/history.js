@@ -16,13 +16,8 @@
    history : array of completed session objects
    stats   : today's totals (resets on a new day)
    ---------------------------------------------------------- */
-let history = loadFromStorage('ff_history', []);
-let stats   = loadFromStorage('ff_stats', {
-  pomodoros: 0,
-  minutes:   0,
-  tasks:     0,
-  date:      today()
-});
+let history = cleanHistory(loadFromStorage('ff_history', []));
+let stats   = cleanStats(loadFromStorage('ff_stats', {}));
 
 // Reset stats if it's a new day
 if (stats.date !== today()) {
@@ -86,8 +81,8 @@ function renderHistory() {
     li.innerHTML = `
       <div class="history-item__dot ${entry.mode}" aria-hidden="true"></div>
       <div class="history-item__info">
-        <div class="history-item__title">${entry.label}</div>
-        <div class="history-item__time">${entry.time} · ${entry.duration} min</div>
+        <div class="history-item__title">${escapeHtml(entry.label)}</div>
+        <div class="history-item__time">${escapeHtml(entry.time)} · ${entry.duration} min</div>
       </div>
     `;
     historyListEl.appendChild(li);

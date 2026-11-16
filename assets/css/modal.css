@@ -114,7 +114,7 @@
 
 .settings-hint {
   font-size: 0.7rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
 }
 
 /* ── Save Button ── */
@@ -162,4 +162,29 @@
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+/* Notification toggle in Settings */
+.settings-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.settings-label--inline {
+  margin: 0;
+  cursor: pointer;
+}
+
+/* Kept in the last stylesheet so these phone sizes win over the earlier files */
+/* ── Phones: small labels at least 12px (easier to read) ── */
+@media (max-width: 640px) {
+  .settings-hint, .settings-label, .sidebar-card__title, .mode-tab, .stat-item__label,
+  .autostart-row, .header__tagline, .modal__save, .timer-display__label, .sidebar-card__action {
+    font-size: 0.75rem;
+  }
+}
+
+/* Touch screens have no keyboard: hide the shortcut hints */
+@media (hover: none) {
+  .shortcuts-hint { display: none; }
 }

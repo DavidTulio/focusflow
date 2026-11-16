@@ -27,7 +27,7 @@
 }
 
 .task-input::placeholder {
-  color: var(--ink-4);
+  color: var(--ink-3);
 }
 
 /* Add button (+) */
@@ -110,14 +110,14 @@
 
 .task-item__text.done {
   text-decoration: line-through;
-  color: var(--ink-4);
+  color: var(--ink-3);
 }
 
 /* Delete button — only shows on hover */
 .task-item__del {
   opacity: 0;
   font-size: 0.75rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
   padding: 0.2rem 0.4rem;
   border-radius: 4px;
   transition: all var(--transition);
@@ -137,7 +137,7 @@
   padding: 1.5rem 1rem;
   text-align: center;
   font-size: 0.78rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
   font-style: italic;
 }
 
@@ -179,7 +179,7 @@
 
 .history-item__time {
   font-size: 0.68rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
   margin-top: 0.1rem;
 }
 
@@ -188,6 +188,6 @@
   padding: 1.5rem 1rem;
   text-align: center;
   font-size: 0.78rem;
-  color: var(--ink-4);
+  color: var(--ink-3);
   font-style: italic;
 }

@@ -4,7 +4,7 @@ A modern, minimalist Pomodoro study timer built with pure HTML, CSS, and JavaScr
 No frameworks, no dependencies, no build tools — just clean, well-structured code.
 
 **Built by:** David John Emmanuel G. Tulio
-**Live Demo:** *(add your Netlify URL here once deployed)*
+**Live Demo:** https://pmdr-focusflow.netlify.app
 
 ---
 
@@ -35,7 +35,17 @@ separated by short breaks.
 - **Auto-start** — optional toggle to automatically begin the next session
 - **Dark / Light Mode** — saves your preference
 - **Keyboard Shortcuts** — Space (start/pause), R (reset), N (next)
-- **Persistent Storage** — everything saves to localStorage
+- **Persistent Storage** — everything saves to localStorage, and saved data is checked before it is used
+- **Exact timing** — counts down from a fixed end time, so it stays accurate in a background tab
+- **Notifications** — optional “session finished” alert when the tab is in the background (turn on in Settings)
+
+---
+
+## 🔒 Security & speed
+
+- Strict security headers in `_headers` (read by Netlify): no inline scripts, no outside requests, can’t be framed by other sites
+- Fonts are served from `assets/fonts/` instead of Google Fonts (faster first paint, no third-party requests)
+- Lighthouse (phone): Performance 94 · Accessibility 100 · Best practices 100 · SEO 100
 
 ---
 
