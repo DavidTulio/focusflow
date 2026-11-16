@@ -151,8 +151,9 @@ function setMode(mode) {
   });
 
   // Update ring stroke color
-  progressRing.className = 'timer-ring__progress' +
-    (mode !== 'focus' ? ` mode-${mode}` : '');
+  // The ring is an SVG element: its class must be set with setAttribute
+  progressRing.setAttribute('class', 'timer-ring__progress' +
+    (mode !== 'focus' ? ` mode-${mode}` : ''));
 
   // Update start button color
   startBtn.className = 'btn-primary' +
